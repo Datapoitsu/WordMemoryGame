@@ -1,0 +1,183 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" href="style.css">
+		<title>Word test</title>
+	</head>
+
+	<body>
+	    <!--
+		<a>
+            <div class="return">
+                <img scr="Arrow.png" style="widht:1vw;height:1vw;">
+            </div>
+        </a>
+		-->
+
+	    <center>
+	        <div class="header" style="width:32vw;height:8vw">
+	            <h1 style="">Word test</h1>
+	        </div>
+
+	        <div class="main" style="width:32vw;height:32vw;padding:1.5vw;font-size:0px;">
+
+    	        <h3 id="title"style="margin-bottom:1vw;">Question 1</h3>
+        		<p id="score" style="margin-bottom:1vw;">Score: </p>
+
+        		<p id="Translate" style="font-weight: bold;margin-bottom:1vw;">Translate this</p>
+        		<p id="Oikein" style="margin-bottom:1vw">Choose correct word</p>
+				<table>
+					<tr style="width: 100%;">
+						<td>
+							<button id="B1"   class="button button1" type="button" onClick="CheckTheAnswer('1')" style="margin-right:1vw;margin-left:1vw;margin-bottom:1vw;display:inline-block;user-select: none; width: 150px;" ><p id="1"></p></button>
+						</td>
+						<td>
+							<button id="B2"   class="button button1" type="button" onClick="CheckTheAnswer('2')" style="margin-left:1vw;margin-right:1vw;margin-bottom:1vw;display: inline-block;user-select: none; width: 150px"><p id="2"></p></button>
+						</td>
+					</tr>
+					<tr style="width: 100%;">
+						<td>
+							<button id="B3"   class="button button1" type="button" onClick="CheckTheAnswer('3')" style="margin-left:1vw;margin-right:1vw;margin-bottom:1vw;display: inline-block;user-select: none; width: 150px"><p id="3"></p></button>
+						</td>
+						<td>
+							<button id="B4"   class="button button1" type="button" onClick="CheckTheAnswer('4')" style="margin-left:1vw;margin-right:1vw;margin-bottom:1vw;display: inline-block;user-select: none; width: 150px"><p id="4"></p></button>
+						</td>
+					</tr>
+
+				</table>
+
+        		<button id="next" class="button button1" type="button" onClick="NewQuestion(Math.floor(Math.random() * (Lauseet.length - 1)))" style="margin-left:2vw;margin-right:2vw;background-color:#777877;user-select: none;" ><p>Next question</p></button>
+	        </div>
+	    </center>
+
+
+	</body>
+
+	<script>
+		class Pair {
+		  constructor(Language1, Language2)
+		  {
+			this.Language1 = Language1;
+			this.Language2 = Language2;
+		  }
+		}
+		let Lauseet = [
+
+			new Pair("talo","ház"),
+
+			new Pair("kissa","matcska"),
+			new Pair("koira","kutya"),
+			new Pair("kärpänen","legy"),
+			new Pair("hevonen","ló"),
+
+			new Pair("juna","vonat"),
+			new Pair("vene","hajó"),
+			new Pair("lentokone","repülögép")
+		]
+		var CorrectButtonIndex = -1;
+		var CurrentQuestion = Math.floor(Math.random() * (Lauseet.length - 1));
+		var OldQuestion = -1;
+		var correct = 0;
+		var question = 0;
+		var answered = true;
+		var unLockColor = window.getComputedStyle(document.getElementById("B1"), null).getPropertyValue("background-color");
+		console.log(unLockColor);
+		var LockColor = "#777877";
+		NewQuestion(CurrentQuestion);
+
+		function NewQuestion(index){
+			while(index == OldQuestion){
+				index = Math.floor(Math.random() * (Lauseet.length - 1));
+			}
+			OldQuestion = index;
+		    if(answered == true){
+				question++;
+				const pickedQuestionIndexes = []
+				for(var i = 0; i < 3; i++){
+					var num = Math.floor((Math.random() * Lauseet.length) % 12);
+					while(pickedQuestionIndexes.includes(num) || num == index){
+						num = Math.floor((Math.random() * Lauseet.length) % 12);
+					}
+					pickedQuestionIndexes.push(num);
+				}
+				CorrectButtonIndex = Math.floor(Math.random() * 4) + 1;
+    			var LangIndex = Math.floor(Math.random() * 2); // 0 = lang1 -> lang2, 1 = lang2 -> lang1
+
+				//To translate
+				console.log(Lauseet[index]);
+				if(LangIndex == 0){
+					document.getElementById("Translate").innerHTML = Lauseet[index].Language2;
+				}
+				if(LangIndex == 1){
+					document.getElementById("Translate").innerHTML = Lauseet[index].Language1;
+				}
+
+				//Button 1
+				var r = Math.floor(Math.random() * (Lauseet.length - 1));
+				for(var i = 1; i < 5; i++){
+					if(CorrectButtonIndex == i){
+						if(LangIndex == 0){
+							document.getElementById(i.toString()).innerHTML = Lauseet[index].Language1;
+						}
+						if(LangIndex == 1){
+							document.getElementById(i.toString()).innerHTML = Lauseet[index].Language2;
+						}
+					}
+					else{
+						if(LangIndex == 0){
+							document.getElementById(i.toString()).innerHTML = Lauseet[pickedQuestionIndexes[0]].Language1;
+						}
+						if(LangIndex == 1){
+							document.getElementById(i.toString()).innerHTML = Lauseet[pickedQuestionIndexes[0]].Language2;
+						}
+						pickedQuestionIndexes.shift(pickedQuestionIndexes[0]);
+					}
+				}
+
+
+				document.getElementById("title").innerHTML = "Question " + question;
+
+
+    			document.getElementById("Oikein").innerHTML = "Choose correct word"
+				document.getElementById("Oikein").style.color = "#ffffff";
+    			answered = false;
+
+    			document.getElementById("B1").style.backgroundColor = unLockColor;
+                document.getElementById("B2").style.backgroundColor = unLockColor;
+				document.getElementById("B3").style.backgroundColor = unLockColor;
+                document.getElementById("B4").style.backgroundColor = unLockColor;
+    			document.getElementById("next").style.backgroundColor = LockColor;
+
+		    }
+
+		}
+
+		function CheckTheAnswer(num){
+		    if(answered == false){
+		        if (num == CorrectButtonIndex)
+		        {
+    				document.getElementById("Oikein").innerHTML = "True";
+					document.getElementById("Oikein").style.color = "#00ff00";
+    				correct++
+    			}
+    			else
+    			{
+    				document.getElementById("Oikein").innerHTML = "False";
+					document.getElementById("Oikein").style.color = "#ff0000";
+    			}
+    			document.getElementById("score").innerHTML = "Score: " + correct + "/" + question;
+
+    			document.getElementById("B1").style.backgroundColor = LockColor;
+                document.getElementById("B2").style.backgroundColor = LockColor;
+				document.getElementById("B3").style.backgroundColor = LockColor;
+                document.getElementById("B4").style.backgroundColor = LockColor;
+    			document.getElementById("next").style.backgroundColor = unLockColor;
+
+		    }
+
+			answered = true
+
+		}
+
+	</script>
+</html>
