@@ -1,0 +1,8 @@
+talo,ház
+kissa,macska
+koira,kutya
+kärpänen,légy
+hevonen,ló
+juna,vonat
+vene,hajó
+lentokone,repülőgép

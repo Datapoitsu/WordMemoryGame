@@ -4,22 +4,14 @@
 		<link rel="stylesheet" href="style.css">
 		<title>Word test</title>
 	</head>
-
+	
 	<body>
-	    <!--
-		<a>
-            <div class="return">
-                <img scr="Arrow.png" style="widht:1vw;height:1vw;">
-            </div>
-        </a>
-		-->
-
 	    <center>
 	        <div class="header" style="width:32vw;height:8vw">
-	            <h1 style="">Word test</h1>
+	            <h1>Word test</h1>
 	        </div>
 
-	        <div class="main" style="width:32vw;height:32vw;padding:1.5vw;font-size:0px;">
+	        <div id="main" class="main" style="width:32vw;height:32vw;padding:1.5vw;font-size:0px;display: none;">
 
     	        <h3 id="title"style="margin-bottom:1vw;">Question 1</h3>
         		<p id="score" style="margin-bottom:1vw;">Score: </p>
@@ -48,12 +40,20 @@
 
         		<button id="next" class="button button1" type="button" onClick="NewQuestion(Math.floor(Math.random() * (Lauseet.length - 1)))" style="margin-left:2vw;margin-right:2vw;background-color:#777877;user-select: none;" ><p>Next question</p></button>
 	        </div>
+			<br>
+			<div id="inputBlock" style="width:32vw;height:32vw;padding:1.5vw;font-size:0px;background-color:#0D7A57;border-radius:1.5vw;height:150px;">
+				<input type="file" id="fileInput" />
+				<div style="height:25px;"></div>
+				<p>Input a file that has translated word and original word separeted by a comma</p>
+				<p>Example: word,sana</p>
+			</div>
 	    </center>
 
 
 	</body>
 
 	<script>
+
 		class Pair {
 		  constructor(Language1, Language2)
 		  {
@@ -61,19 +61,43 @@
 			this.Language2 = Language2;
 		  }
 		}
-		let Lauseet = [
 
-			new Pair("talo","ház"),
+		const Lauseet = [
 
-			new Pair("kissa","matcska"),
-			new Pair("koira","kutya"),
-			new Pair("kärpänen","legy"),
-			new Pair("hevonen","ló"),
-
-			new Pair("juna","vonat"),
-			new Pair("vene","hajó"),
-			new Pair("lentokone","repülögép")
 		]
+		
+		var rawData = "";
+		document.getElementById('fileInput')
+			.addEventListener('change', (event) =>
+			{
+			const file = event.target.files[0];
+			const reader = new FileReader();
+
+			reader.onload = function () {
+				const content = reader.result;
+				rawData = content.toString();
+				var lines = rawData.replaceAll("\n",";");
+				const P = lines.split(";");
+				for(var i = 0; i < P.length; i++){
+					var a = P[i].split(",");
+					Lauseet.push(new Pair(a[0],a[1]));
+					console.log(Lauseet[i].Language1,Lauseet[i].Language2);
+				}
+				var x = document.getElementById("main");
+				x.style.display = "block";
+				var x = document.getElementById("inputBlock");
+				x.style.display = "none";
+				NewQuestion(0);
+			};
+
+			reader.onerror = function ()
+			{
+				console.error('Error reading the file');
+			};
+
+			reader.readAsText(file, 'utf-8');
+		});
+		
 		var CorrectButtonIndex = -1;
 		var CurrentQuestion = Math.floor(Math.random() * (Lauseet.length - 1));
 		var OldQuestion = -1;
@@ -83,7 +107,7 @@
 		var unLockColor = window.getComputedStyle(document.getElementById("B1"), null).getPropertyValue("background-color");
 		console.log(unLockColor);
 		var LockColor = "#777877";
-		NewQuestion(CurrentQuestion);
+		//NewQuestion(CurrentQuestion);
 
 		function NewQuestion(index){
 			while(index == OldQuestion){
